@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversational AI Market Trends & Strategic Forecast (2025–2030)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -44,10 +45,13 @@
             left: 0;
             background-color: #ffffff;
             border-radius: 1.5rem;
+            box-sizing: border-box; /* Include padding in width/height calculation */
+            pointer-events: none; /* Crucial: Prevent interaction with hidden slides */
+            overflow-y: auto; /* ADDED: Enable scrolling for content that overflows vertically */
         }
         .slide.active {
             opacity: 1;
-            position: relative; /* Bring active slide to flow */
+            pointer-events: auto; /* Allow interaction with active slide */
         }
         .slide h1, .slide h2 {
             color: #1a202c; /* Dark text for headings */
@@ -154,6 +158,177 @@
             white-space: nowrap; /* Ensures text stays on a single line */
         }
 
+        /* Timeline specific styles */
+        .timeline {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-top: 2rem;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .timeline-item {
+            flex: 0 0 auto; /* Don't grow, don't shrink, base on content */
+            width: 150px; /* Fixed width for each item */
+            text-align: center;
+            position: relative;
+            padding-top: 2rem;
+            margin: 0 1rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background-color: #2b6cb0;
+            border-radius: 50%;
+            z-index: 1;
+            border: 2px solid white;
+        }
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #cbd5e0;
+            z-index: 0;
+            transform: translateX(50%);
+        }
+        .timeline-year {
+            font-weight: 600;
+            color: #2b6cb0;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-event {
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        /* Case Study styles */
+        .case-study-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; /* Changed to 3 columns: card, arrow, card */
+            gap: 1.5rem; /* Adjusted gap for new layout */
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+        .case-study-card {
+            background-color: #f0f4f8;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            height: 100%; /* Ensure cards are same height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .case-study-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2b6cb0;
+            margin-bottom: 1rem;
+        }
+        .case-study-card .metric {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4299e1;
+            margin-bottom: 0.5rem;
+        }
+        .case-study-card p {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+        .case-study-arrow {
+            text-align: center;
+            font-size: 3rem;
+            color: #4299e1;
+            animation: bounce-arrow 1.5s infinite;
+            display: flex; /* Ensure arrow is centered vertically in its grid cell */
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Buyer Persona styles */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .persona-card {
+            background-color: #f0f4f8;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+        .persona-card:hover {
+            transform: translateY(-5px);
+        }
+        .persona-card .icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            color: #2b6cb0; /* Icon color */
+        }
+        .persona-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.75rem;
+        }
+        .persona-card .section-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+        .persona-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            width: 100%;
+        }
+        .persona-card li {
+            font-size: 0.9rem;
+            color: #6a768e;
+            margin-bottom: 0.25rem;
+            padding-left: 0.5rem;
+            position: relative;
+        }
+        .persona-card li::before {
+            content: "•";
+            color: #4299e1;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Chart Canvas Size */
+        .chart-container {
+            width: 100%;
+            height: 400px; /* Fixed height for charts */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .presentation-container {
@@ -187,13 +362,50 @@
                 font-size: 0.75rem;
             }
             .logo-branding {
-                /* Even on mobile, we'll keep it as a row for single-line text */
-                flex-direction: row; 
-                margin-bottom: 1rem; /* Less space for smaller screens */
+                flex-direction: row; /* Still keep as row on mobile */
+                margin-bottom: 1rem;
             }
             .logo-branding .company-name {
-                font-size: 1.1rem; /* Adjusted: Smaller for mobile */
-                white-space: nowrap; /* Ensures text stays on a single line */
+                font-size: 1.1rem;
+                white-space: nowrap;
+            }
+
+            .timeline {
+                flex-wrap: wrap; /* Allow items to wrap */
+                justify-content: center;
+                gap: 1.5rem;
+            }
+            .timeline-item {
+                width: 120px; /* Smaller width for mobile */
+                padding-top: 1.5rem;
+                margin: 0.5rem; /* Adjust margin */
+            }
+            .timeline-item:not(:last-child)::after {
+                width: calc(100% + 1rem); /* Extend line to connect wrapped items */
+                left: calc(50% - 0.5rem);
+                transform: translateX(0); /* Reset transform if wrapping */
+                top: 8px; /* Adjust line vertical position */
+            }
+
+            .case-study-grid {
+                grid-template-columns: 1fr; /* Stack vertically on mobile */
+                gap: 1.5rem;
+            }
+            .case-study-card {
+                padding: 1rem;
+            }
+            .case-study-card h3 {
+                font-size: 1.2rem;
+            }
+            .case-study-card .metric {
+                font-size: 2rem;
+            }
+            .persona-grid {
+                grid-template-columns: 1fr; /* Stack personas on mobile */
+                gap: 1rem;
+            }
+            .chart-container {
+                height: 300px; /* Smaller height for charts on mobile */
             }
         }
     </style>
@@ -239,18 +451,34 @@
                 </ul>
             </div>
 
-            <!-- Slide 4: Regional Growth Drivers -->
+            <!-- Slide 4: Regional Growth Bar Chart -->
             <div class="slide" data-slide="3">
                 <h2 class="text-3xl font-bold">Regional Growth Drivers</h2>
-                <ul class="list-disc ml-6">
+                <div class="chart-container">
+                    <canvas id="regionalGrowthChart"></canvas>
+                </div>
+                <ul class="list-disc ml-6 mt-4">
                     <li><strong>North America (38% market share):</strong> Cloud adoption + enterprise L&D digitization [Statista, 2024]</li>
                     <li><strong>Asia-Pacific (27% CAGR):</strong> Mobile-first nations + government education investments [MarketsandMarkets, 2024]</li>
                     <li><strong>Europe (22% CAGR):</strong> Policy alignment with the EU AI Act fueling ethical AI adoption [EU Commission, 2024]</li>
                 </ul>
             </div>
 
-            <!-- Slide 5: Modality Evolution -->
+            <!-- Slide 5: Segment Distribution Pie Chart -->
             <div class="slide" data-slide="4">
+                <h2 class="text-3xl font-bold">Segment Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="segmentDistributionChart"></canvas>
+                </div>
+                <ul class="list-disc ml-6 mt-4">
+                    <li>Foundational LLMs & NLP Models: 35%</li>
+                    <li>Conversational Platforms (B2B & B2C): 45%</li>
+                    <li>Turnkey Vertical Solutions (e.g., Healthcare, Education): 20% [Grand View Research, 2024]</li>
+                </ul>
+            </div>
+
+            <!-- Slide 6: Modality Evolution -->
+            <div class="slide" data-slide="5">
                 <h2 class="text-3xl font-bold">2. Modality Evolution: From Text to Multimodal AI</h2>
                 <h3 class="text-xl font-semibold mb-2">Current Adoption:</h3>
                 <ul class="list-disc ml-6 mb-4">
@@ -262,9 +490,9 @@
                 <p class="mb-4">Multimodal AI will underpin the future of accessibility and inclusivity. Platforms integrating neural voice synthesis, real-time sentiment calibration, and adaptive visual interfaces will define the next generation of customer and learner engagement.</p>
             </div>
 
-            <!-- Slide 6: Innovation Trajectories -->
-            <div class="slide" data-slide="5">
-                <h2 class="text-3xl font-bold">3. Innovation Trajectories (2025–2030)</h2>
+            <!-- Slide 7: Innovation Trajectories Timeline -->
+            <div class="slide" data-slide="6">
+                <h2 class="text-3xl font-bold mb-8">3. Innovation Trajectories (2025–2030)</h2>
                 <table class="w-full text-left table-auto">
                     <thead>
                         <tr>
@@ -304,8 +532,43 @@
                 <p class="text-sm text-gray-500 mt-4">[MIT Technology Review, 2023 for Edge AI and Sustainability]</p>
             </div>
 
-            <!-- Slide 7: Use Cases: Corporate Learning & Development -->
-            <div class="slide" data-slide="6">
+            <!-- Slide 8: Historical Timeline Infographic -->
+            <div class="slide" data-slide="7">
+                <h2 class="text-3xl font-bold">Historical AI Milestones (2018–2024)</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-event">GPT-1 Launch</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2019</div>
+                        <div class="timeline-event">BERT & RoBERTa</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2020</div>
+                        <div class="timeline-event">GPT-3 Debut</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2021</div>
+                        <div class="timeline-event">Early NLP APIs</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2022</div>
+                        <div class="timeline-event">ChatGPT Release</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2023</div>
+                        <div class="timeline-event">EU AI Act Draft</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2024</div>
+                        <div class="timeline-event">Multimodal AI Adoption</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 9: Use Cases: Corporate Learning & Development -->
+            <div class="slide" data-slide="8">
                 <h2 class="text-3xl font-bold">4. Use Cases & Industry-Specific Penetration</h2>
                 <h3 class="text-xl font-semibold mb-2">Corporate Learning & Development (L&D)</h3>
                 <ul class="list-disc ml-6 mb-4">
@@ -321,8 +584,35 @@
                 </ul>
             </div>
 
-            <!-- Slide 8: Use Cases: Healthcare & Customer Support -->
-            <div class="slide" data-slide="7">
+            <!-- Slide 10: Case Study Snapshot (Corporate L&D) -->
+            <div class="slide" data-slide="9">
+                <h2 class="text-3xl font-bold text-center mb-8">Case Study Snapshot: L&D Transformation</h2>
+                <div class="case-study-grid">
+                    <div class="case-study-card">
+                        <h3>Before Conversational AI</h3>
+                        <div class="icon">🐢</div>
+                        <p class="metric">45 days</p>
+                        <p>Average Training Time</p>
+                        <div class="icon">📉</div>
+                        <p class="metric">20%</p>
+                        <p>Skill Adoption Rate</p>
+                    </div>
+                    <div class="case-study-arrow">➡️</div>
+                    <div class="case-study-card">
+                        <h3>After Conversational AI</h3>
+                        <div class="icon">🚀</div>
+                        <p class="metric">15 days</p>
+                        <p>Average Training Time</p>
+                        <div class="icon">📈</div>
+                        <p class="metric">70%</p>
+                        <p>Skill Adoption Rate</p>
+                    </div>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-4">Automated coaching and microlearning drove significant efficiency and effectiveness gains.</p>
+            </div>
+
+            <!-- Slide 11: Use Cases: Healthcare & Customer Support -->
+            <div class="slide" data-slide="10">
                 <h3 class="text-xl font-semibold mb-2">Healthcare</h3>
                 <ul class="list-disc ml-6 mb-4">
                     <li>Conversational AI enables post-visit education, follow-up triage, and mental health screening</li>
@@ -335,8 +625,8 @@
                 </ul>
             </div>
 
-            <!-- Slide 9: Competitive Landscape -->
-            <div class="slide" data-slide="8">
+            <!-- Slide 12: Competitive Landscape -->
+            <div class="slide" data-slide="11">
                 <h2 class="text-3xl font-bold">5. Competitive Landscape</h2>
                 <h3 class="text-xl font-semibold mb-2">Category Leaders by Positioning:</h3>
                 <table class="w-full text-left table-auto mb-4">
@@ -373,8 +663,8 @@
                 </ul>
             </div>
 
-            <!-- Slide 10: Risk & Governance Considerations -->
-            <div class="slide" data-slide="9">
+            <!-- Slide 13: Risk & Governance Considerations -->
+            <div class="slide" data-slide="12">
                 <h2 class="text-3xl font-bold">6. Risk & Governance Considerations</h2>
                 <h3 class="text-xl font-semibold mb-2">Regulatory Trends:</h3>
                 <ul class="list-disc ml-6 mb-4">
@@ -389,10 +679,13 @@
                 </ul>
             </div>
 
-            <!-- Slide 11: Forecast Scenarios -->
-            <div class="slide" data-slide="10">
-                <h2 class="text-3xl font-bold">7. Forecast Scenarios</h2>
-                <table class="w-full text-left table-auto mb-4">
+            <!-- Slide 14: Forecast Scenarios Line Chart -->
+            <div class="slide" data-slide="13">
+                <h2 class="text-3xl font-bold">7. Forecast Scenarios (2025-2030)</h2>
+                <div class="chart-container">
+                    <canvas id="marketForecastChart"></canvas>
+                </div>
+                <table class="w-full text-left table-auto mt-4">
                     <thead>
                         <tr>
                             <th class="py-2 px-4">Year</th>
@@ -424,8 +717,8 @@
                 </table>
             </div>
 
-            <!-- Slide 12: Strategic Recommendations -->
-            <div class="slide" data-slide="11">
+            <!-- Slide 15: Strategic Recommendations -->
+            <div class="slide" data-slide="14">
                 <h2 class="text-3xl font-bold">Strategic Recommendations</h2>
                 <h3 class="text-xl font-semibold mb-2">Strategic Levers for Innovators:</h3>
                 <ul class="list-disc ml-6">
@@ -436,48 +729,93 @@
                 </ul>
             </div>
 
-            <!-- Slide 13: Strategic Buyer Profiles: L&D Director & CIO -->
-            <div class="slide" data-slide="12">
-                <h2 class="text-3xl font-bold">8. Strategic Buyer Profiles</h2>
-                <h3 class="text-xl font-semibold mb-2">L&D Director (Enterprise)</h3>
-                <ul class="list-disc ml-6 mb-4">
-                    <li><strong>Top Pain Points:</strong> Training inefficiency, limited personalization, and high employee turnover</li>
-                    <li><strong>Desired Outcomes:</strong> Measurable skill adoption, reduced training time, retention uplift</li>
-                    <li><strong>Key Buying Criteria:</strong> LMS compatibility, ROI tracking, learner engagement analytics</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Chief Information Officer (CIO)</h3>
-                <ul class="list-disc ml-6">
-                    <li><strong>Top Pain Points:</strong> Data privacy concerns, integration complexity, legacy infrastructure</li>
-                    <li><strong>Desired Outcomes:</strong> Secure and scalable systems, seamless deployment, user adoption</li>
-                    <li><strong>Key Buying Criteria:</strong> SOC 2 compliance, on-premise options, system interoperability</li>
-                </ul>
+            <!-- Slide 16: Strategic Buyer Profiles: L&D Director & CIO -->
+            <div class="slide" data-slide="15">
+                <h2 class="text-3xl font-bold text-center mb-8">8. Strategic Buyer Profiles</h2>
+                <div class="persona-grid">
+                    <div class="persona-card">
+                        <div class="icon">🎓</div>
+                        <h3>L&D Director</h3>
+                        <p class="section-title">Pain Points:</p>
+                        <ul>
+                            <li>Inefficient training</li>
+                            <li>Limited personalization</li>
+                            <li>High employee turnover</li>
+                        </ul>
+                        <p class="section-title">Criteria:</p>
+                        <ul>
+                            <li>LMS compatibility</li>
+                            <li>ROI tracking</li>
+                            <li>Engagement analytics</li>
+                        </ul>
+                    </div>
+                    <div class="persona-card">
+                        <div class="icon">💻</div>
+                        <h3>Chief Information Officer (CIO)</h3>
+                        <p class="section-title">Pain Points:</p>
+                        <ul>
+                            <li>Data privacy concerns</li>
+                            <li>Integration complexity</li>
+                            <li>Legacy infrastructure</li>
+                        </ul>
+                        <p class="section-title">Criteria:</p>
+                        <ul>
+                            <li>Secure, scalable systems</li>
+                            <li>Seamless deployment</li>
+                            <li>System interoperability</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            <!-- Slide 14: Strategic Buyer Profiles: CX Director & Healthcare Admin -->
-            <div class="slide" data-slide="13">
-                <h3 class="text-xl font-semibold mb-2">Customer Experience (CX) Director</h3>
-                <ul class="list-disc ml-6 mb-4">
-                    <li><strong>Top Pain Points:</strong> Long handle times, inconsistent service, churn from poor engagement</li>
-                    <li><strong>Desired Outcomes:</strong> Faster resolution, tone-aware responses, proactive issue prediction</li>
-                    <li><strong>Key Buying Criteria:</strong> Sentiment detection, omnichannel deployment, NPS impact</li>
-                </ul>
-                <h3 class="text-xl font-semibold mb-2">Healthcare Administrator</h3>
-                <ul class="list-disc ml-6">
-                    <li><strong>Top Pain Points:</strong> Overloaded call centers, language barriers, patient education gaps</li>
-                    <li><strong>Desired Outcomes:</strong> Multilingual support, accurate triage, improved follow-up compliance</li>
-                    <li><strong>Key Buying Criteria:</strong> HIPAA compliance, voice AI, integration with patient systems</li>
-                </ul>
+            <!-- Slide 17: Strategic Buyer Profiles: CX Director & Healthcare Admin -->
+            <div class="slide" data-slide="16">
+                <h2 class="text-3xl font-bold text-center mb-8">8. Strategic Buyer Profiles (Cont.)</h2>
+                <div class="persona-grid">
+                    <div class="persona-card">
+                        <div class="icon">💬</div>
+                        <h3>Customer Experience (CX) Director</h3>
+                        <p class="section-title">Pain Points:</p>
+                        <ul>
+                            <li>Long handle times</li>
+                            <li>Inconsistent service</li>
+                            <li>Churn from poor engagement</li>
+                        </ul>
+                        <p class="section-title">Criteria:</p>
+                        <ul>
+                            <li>Sentiment detection</li>
+                            <li>Omnichannel deployment</li>
+                            <li>NPS impact</li>
+                        </ul>
+                    </div>
+                    <div class="persona-card">
+                        <div class="icon">🏥</div>
+                        <h3>Healthcare Administrator</h3>
+                        <p class="section-title">Pain Points:</p>
+                        <ul>
+                            <li>Overloaded call centers</li>
+                            <li>Language barriers</li>
+                            <li>Patient education gaps</li>
+                        </ul>
+                        <p class="section-title">Criteria:</p>
+                        <ul>
+                            <li>HIPAA compliance</li>
+                            <li>Voice AI</li>
+                            <li>Integration with patient systems</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
-            <!-- Slide 15: Conclusion -->
-            <div class="slide" data-slide="14">
+            <!-- Slide 18: Conclusion -->
+            <div class="slide" data-slide="17">
                 <h2 class="text-3xl font-bold">Conclusion</h2>
                 <p class="text-lg mb-4">Conversational AI is rapidly becoming a pillar of enterprise transformation, not just a support tool. As users demand more emotionally intelligent, culturally fluent, and context-aware interactions, the winners in this market will be those that can integrate deeply into workflows while adapting in real-time to human behavior.</p>
                 <p class="text-lg">Those who invest early in the development or deployment of scalable, privacy-first, emotionally calibrated AI agents will be best positioned to define the future of how we learn, communicate, and grow.</p>
             </div>
 
-            <!-- Slide 16: Sources -->
-            <div class="slide" data-slide="15">
+            <!-- Slide 19: Sources -->
+            <div class="slide" data-slide="18">
                 <h2 class="text-3xl font-bold">Sources</h2>
                 <ul class="list-disc ml-6 text-sm">
                     <li>Statista. "Conversational AI Market Forecast (2024–30)." 2024.</li>
@@ -511,6 +849,255 @@
         const nextBtn = document.getElementById('nextBtn');
         let currentSlideIndex = 0;
 
+        // Chart data and configuration
+        const chartColors = {
+            primary: 'rgba(66, 153, 225, 0.8)', // Tailwind blue-500
+            secondary: 'rgba(100, 116, 139, 0.8)', // Tailwind slate-500
+            tertiary: 'rgba(16, 185, 129, 0.8)', // Tailwind emerald-500
+            accent1: 'rgba(239, 68, 68, 0.8)', // Tailwind red-500
+            accent2: 'rgba(245, 158, 11, 0.8)', // Tailwind yellow-500
+            bgLight: '#f0f4f8'
+        };
+
+        // Market Forecast Line Chart (Slide 14, data-slide="13")
+        const createMarketForecastChart = () => {
+            const ctx = document.getElementById('marketForecastChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2025', '2028', '2030'],
+                    datasets: [
+                        {
+                            label: 'Conservative',
+                            data: [13.7, 27.5, 41.4],
+                            borderColor: chartColors.secondary,
+                            backgroundColor: 'transparent',
+                            tension: 0.1,
+                            pointBackgroundColor: chartColors.secondary,
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: chartColors.secondary,
+                        },
+                        {
+                            label: 'Base Case',
+                            data: [14.3, 29.7, 44.2],
+                            borderColor: chartColors.primary,
+                            backgroundColor: 'transparent',
+                            tension: 0.1,
+                            pointBackgroundColor: chartColors.primary,
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: chartColors.primary,
+                        },
+                        {
+                            label: 'High Growth',
+                            data: [15.1, 35.0, 50.0],
+                            borderColor: chartColors.tertiary,
+                            backgroundColor: 'transparent',
+                            tension: 0.1,
+                            pointBackgroundColor: chartColors.tertiary,
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: chartColors.tertiary,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Conversational AI Market Forecast (Billions USD)',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#1a202c'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: $${context.parsed.y}B`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Market Value (Billions USD)',
+                                color: '#4a5568'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return `$${value}B`;
+                                },
+                                color: '#4a5568'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Year',
+                                color: '#4a5568'
+                            },
+                            ticks: {
+                                color: '#4a5568'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Segment Distribution Pie Chart (Slide 5, data-slide="4")
+        const createSegmentDistributionChart = () => {
+            const ctx = document.getElementById('segmentDistributionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Foundational LLMs & NLP Models (35%)', 'Conversational Platforms (B2B & B2C) (45%)', 'Turnkey Vertical Solutions (20%)'],
+                    datasets: [{
+                        data: [35, 45, 20],
+                        backgroundColor: [
+                            chartColors.primary,
+                            chartColors.tertiary,
+                            chartColors.accent2
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Segment Distribution',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#1a202c'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Regional Growth Bar Chart (Slide 4, data-slide="3")
+        const createRegionalGrowthChart = () => {
+            const ctx = document.getElementById('regionalGrowthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['North America (38% Market Share)', 'Asia-Pacific (27% CAGR)', 'Europe (22% CAGR)'],
+                    datasets: [{
+                        label: 'Growth Rate / Market Share',
+                        data: [38, 27, 22],
+                        backgroundColor: [
+                            chartColors.primary,
+                            chartColors.tertiary,
+                            chartColors.accent1
+                        ],
+                        borderColor: [
+                            chartColors.primary.replace('0.8', '1'),
+                            chartColors.tertiary.replace('0.8', '1'),
+                            chartColors.accent1.replace('0.8', '1')
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Regional Growth Drivers',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#1a202c'
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label.split('(')[0].trim()}: ${context.parsed.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)',
+                                color: '#4a5568'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                },
+                                color: '#4a5568'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#4a5568'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        const chartInstances = {}; // To store chart instances
+
+        function destroyCharts() {
+            for (const chartId in chartInstances) {
+                if (chartInstances[chartId]) {
+                    chartInstances[chartId].destroy();
+                    delete chartInstances[chartId];
+                }
+            }
+        }
+
+        function renderChartsForSlide(slideIndex) {
+            destroyCharts(); // Destroy existing charts before rendering new ones
+
+            // Map slide data-slide index to chart creation function
+            if (slideIndex === 3) { // Regional Growth Chart
+                createRegionalGrowthChart();
+            } else if (slideIndex === 4) { // Segment Distribution Chart
+                createSegmentDistributionChart();
+            } else if (slideIndex === 13) { // Market Forecast Chart
+                createMarketForecastChart();
+            }
+        }
+
         function showSlide(index) {
             slides.forEach((slide, i) => {
                 slide.classList.remove('active');
@@ -519,6 +1106,7 @@
                 }
             });
             updateButtons();
+            renderChartsForSlide(index); // Render charts when slide becomes active
         }
 
         function updateButtons() {
@@ -540,7 +1128,7 @@
             }
         });
 
-        // Initialize presentation
+        // Initialize presentation and charts on window load
         window.onload = function() {
             showSlide(currentSlideIndex);
         };
